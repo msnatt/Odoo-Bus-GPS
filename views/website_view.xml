@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="menu_customer_all" model="website.menu">
+            <field name="name">Demo Website</field>
+            <field name="url">/customer/</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">25</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="index">
+        <t t-call="website.layout">
+            <t t-set="title">Customer</t>
+            <div class="container">
+                <h1 class="mb-5">ข้อมูลลูกค้ารอรถ</h1>
+
+                <table class="table table-bordered mt-4">
+                    <thead>
+                        <tr>
+                            <th width="10%">ลำดับ</th>
+                            <th>สถานี</th>
+                            <th>จำนวนผู้โดยสาร</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="custs" t-as="c">
+                            <tr>
+                                <td>
+                                    <span t-esc="c_index + 1"/>
+                                </td>
+                                <td>
+                                    <span t-esc="c.name"/>
+                                </td>
+                                <td>
+                                    <span t-esc="c.total_passenger"/>
+                                </td>
+
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+                <!-- ปุ่มหลังตาราง -->
+                <div class="d-flex justify-content-end mt-3">
+                    <t t-foreach="custs" t-as="c">
+                        <form t-att-action="'/reset_customer_values/' + str(c.id)" method="GET">
+                            <button type="submit" class="btn btn-primary mr-2">
+                                รีเซ็ตข้อมูลสถานี <span t-esc="c.name"/>
+                            </button>
+                        </form>
+                    </t>
+                </div>
+            </div>
+        </t>
+        <!-- JavaScript for auto-refresh every 5 seconds -->
+        <t t-javascript="true">
+            <script type="text/javascript">
+                setInterval(function() {
+                    window.location.reload();
+                }, 5000);  // Refresh every 5000 milliseconds (5 seconds)
+            </script>
+        </t>
+    </template>
+</odoo>

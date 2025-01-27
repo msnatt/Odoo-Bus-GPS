@@ -1,0 +1,65 @@
+<odoo>
+    <template id="display_station">
+        <t t-call="website.layout">
+            <t t-set="title">Station ป้ายรถบริการเส้นทาง</t>
+            <div class="container">
+                <h1 class="mb-5">ป้ายรถบริการเส้นทาง</h1>
+
+                <!-- ส่วนของฟอร์ม -->
+                <form t-attf-action="/display/station" enctype="multipart/form-data" method="POST">
+<!--                    <input type="hidden" name="txt_id" t-attf-value="{{ data.id }}"/>-->
+
+                </form>
+
+                <!-- ส่วนของแผนที่ Longdo -->
+                <div id="map" style="height: 500px; margin-top: 20px;"></div>
+                <div id="result" style="position: absolute; top: 0; bottom: 0; right: 0; width: 1px; height: 80%; margin: auto; border: 4px solid #dddddd; background: #ffffff; overflow: auto; z-index: 2;"></div>
+
+                <!-- Include Longdo Map API -->
+                <script type="text/javascript" src="https://api.longdo.com/map/?key=ef8e2b805bd26f8d69b291446b10d67d"></script>
+
+                <!-- Script for initializing Longdo Map -->
+                <script>
+                    function init() {
+                    //start รับค่าพิกัด lon และ lat จาก poligon
+                    var rectangle = new longdo.Rectangle({
+                      lon: 97, lat: 17
+                    }, {
+                      width: 2, height: 1
+                    }, {
+                      editable: true
+                    });
+
+                    map.Overlays.add(rectangle); //add geometry object
+                     // end  poligon
+
+                        var map = new longdo.Map({
+                            placeholder: document.getElementById('map')
+                        });
+                        map.Route.placeholder(document.getElementById('result'));
+
+                        // ใช้ค่าพิกัดจาก backend ใน Marker
+                      //  map.Route.add(new longdo.Marker({ lon: 100.45520392419759, lat: 13.886336657217814 },
+                        map.Route.add(new longdo.Marker({ lon: 100.45520, lat: 13.88601},
+                            {
+                                title: 'Bus',
+                                detail: 'I\'m here'
+                            }
+                        ));
+                    map.Route.add({ lon: 100, lat: 15 });
+
+                    map.Route.search();
+
+                      map.Route.add({ lon: 100, lat: 14 });
+
+                    map.Route.search();
+
+
+
+                    }
+                    window.onload = init;
+                </script>
+            </div>
+        </t>
+    </template>
+</odoo>
