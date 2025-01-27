@@ -7,29 +7,37 @@
                 <!-- ส่วนของฟอร์ม -->
                 <form t-attf-action="/customer/update" enctype="multipart/form-data" method="POST" class="mt-4">
                     <!-- <input type="hidden" name="txt_id" t-attf-value="{{ data.id }}"/> -->
-                    <div class="form-group" style="display: flex; align-items: center;">
-                        <label style="margin-right: 10px;">สายรถ</label>
-                        <t t-if="bus">
-                            <select name="txt_name" class="form-control" style="width: 10%; margin-right: 10px;">
-                                <option value="">กรุณาเลือก</option>
-                                <t t-foreach="allbus" t-as="abus">
-                                    <option t-att-value="abus.name" t-att-selected="abus.name == bus.name">
-                                        <t t-esc="abus.name"/>
-                                    </option>
-                                </t>
-                            </select>
-                        </t>
-                        <t t-else="">
-                            <select name="txt_name" class="form-control" style="width: 10%; margin-right: 10px;">
-                                <option value="">กรุณาเลือก</option>
-                                <t t-foreach="allbus" t-as="abus">
-                                    <option t-att-value="abus.name">
-                                        <t t-esc="abus.name"/>
-                                    </option>
-                                </t>
-                            </select>
-                        </t>
-                        <button type="submit" class="btn btn-primary">ค้นหารถ</button>
+                    <div class="form-group" style="display: flex; align-items: center; justify-content: space-between;">
+                        <div class="d-flex" style="width:300px; align-items: center">
+                            <label style="width:20%; margin-right: 10px;">สายรถ</label>
+                            <t t-if="bus">
+                                <select name="txt_name" class="form-control w-50"
+                                        style="width: 10%; margin-right: 10px;">
+                                    <option value="">กรุณาเลือก</option>
+                                    <t t-foreach="allbus" t-as="abus">
+                                        <option t-att-value="abus.name" t-att-selected="abus.name == bus.name">
+                                            <t t-esc="abus.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                            <t t-else="">
+                                <select name="txt_name" class="form-control w-50"
+                                        style="width: 10%; margin-right: 10px;">
+                                    <option value="">กรุณาเลือก</option>
+                                    <t t-foreach="allbus" t-as="abus">
+                                        <option t-att-value="abus.name">
+                                            <t t-esc="abus.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                            <button type="submit" class="btn btn-primary w-50">ค้นหารถ</button>
+                            <t t-if="bus">
+                                <label t-attf-value="{{ bus.latitude }}"></label>
+                            </t>
+                        </div>
+                        <button class="btn btn-secondary" onclick="resetcenter()">รีเซ็ตแมพ</button>
                     </div>
                 </form>
 
@@ -67,31 +75,13 @@
             var ysum = 0;
 
             map = new longdo.Map({
+            rotate: 90,
             placeholder: document.getElementById('map')
             });
-            // ราชภัช สงขลา
-            //map.location({ lon:100.613034, lat:7.167384 }, true);
-            map.location({ lon:100.66, lat:13.8097 }, true);
-            map.zoom(16, true);
-
-            // กำหนดขอบเขตของแผนที่ (bounding box) ในรูปแบบของพิกัด
-            var bounds = new longdo.Bounds(
-            new longdo.LatLng(13.816201, 100.655515), // พิกัดมุมบนซ้าย  13.816201, 100.655515
-            new longdo.LatLng(13.810888, 100.663304) // พิกัดมุมล่างขวา  13.810888, 100.663304
-            );
-
-            // ตั้งค่าให้แผนที่สามารถแสดงผลได้เฉพาะในขอบเขตนี้
-            map.setBounds(bounds);
-
-            map.Event.bind(longdo.EventName.Zoom, function() {
-            var result = map.zoom()
-            console.log("Zoom" ,result);
-            if (result &lt; 16){
-            map.zoom(16, true);
-            map.location({ lon:100.66, lat:13.8097 }, true);
-            }
-            console.log(result);
-            });
+            // ราชภัช สงขลา   100.61286270618439| Lat : 7.169065418767738
+            map.location({ lon:100.61286270618439, lat:7.169065418767738 }, true);
+            //map.location({ lon:100.66, lat:13.8097 }, true);
+            map.zoomRange({ min:16, max:20 });
 
 
             //station
@@ -99,7 +89,7 @@
             title: 'Custom Marker',
             icon: {
             html: '<b>อาคาร วิทย์</b>',
-            offset: { x: 50, y: 80 }
+            offset: { x:0, y: 0 }
             },
             popup: {
             html: '<div style="background: #eeeeff;">popup</div>'
@@ -112,10 +102,13 @@
             longtitude = document.getElementById("longtitude").value
             latitude = document.getElementById("latitude").value
             if(!latitude){
-            latitude=13.898285
+            latitude=13.898285;
             }
             if(!longtitude){
-            longtitude=100.537149
+            longtitude=100.537149;
+            }
+            if(!name_bus){
+            name_bus = "";
             }
 
             //map.Route.add(new longdo.Marker({ lon: longtitude, lat: latitude},
@@ -124,41 +117,64 @@
             //detail: 'I\'m here'
             //}
             //));
+
         </script>
         <script>
+            function checkborder() {
+            var location = map.location();
+
+            if (location.lon &lt; 100.606597) {
+                x = 100.606597;
+            }else if (location.lon > 100.618442) {
+                x = 100.618442;
+            }else {
+                x = location.lon;
+            }
+            if (location.lat > 7.179364) {
+                y = 7.179364;
+            }else if (location.lat &lt; 7.161225) {
+                y = 7.161225;
+            }else {
+                y = location.lat;
+            }
+            console.log("lon : " + x + "| Lat : " + y);
+            map.location({ lon:x, lat:y }, true);
+            };
+
+            function resetcenter() {
+            map.location({ lon:100.613034, lat:7.167384 }, true); //university
+            //map.location({ lon:100.66, lat:13.8097 }, true); //bkk
+            console.log("reset");
+            map.zoom(16, true);
+            }
 
             function fetchLocation() {
             // รับค่า name จาก input field
 
-            // ส่ง POST request ไปยัง '/get_location' พร้อมกับข้อมูล 'name'
             fetch('/get_location', {
-            method: 'POST', // ใช้ POST method
+            method: 'POST',
             headers: {
-            'Content-Type': 'application/json', // ส่งข้อมูลในรูปแบบ JSON
+            'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-            name: name_bus // ส่ง 'name' ที่รับมาจาก input field
+            name: name_bus
             })
             })
-            .then(response => response.json()) // รับข้อมูลตอบกลับเป็น JSON
+            .then(response => response.json())
             .then(data => {
             console.log(data.result);
             if (name_bus) {
-            // แปลงข้อมูล result ที่เป็นสตริง JSON ให้เป็นอ็อบเจ็กต์
             const locationData = JSON.parse(data.result);
 
             longtitude = locationData.longtitude;
             latitude = locationData.latitude;
 
-            // ลบ Marker เดิมที่แสดงอยู่บนแผนที่
             map.Overlays.remove(car);
 
-            // สร้าง Marker ใหม่จากข้อมูลที่ได้รับ
             car = new longdo.Marker({ lon: longtitude, lat: latitude }, {
             title: 'Bus'
             });
 
-            // เพิ่ม Marker ใหม่ลงแผนที่
             map.Overlays.add(car);
 
             console.log("Updated position: " + longtitude + ", " + latitude);
@@ -171,8 +187,8 @@
             });
             }
 
-            // เรียกฟังก์ชันทุกๆ 1 วินาที
             setInterval(fetchLocation, 1000);
+            setInterval(checkborder, 500);
         </script>
 
     </template>
