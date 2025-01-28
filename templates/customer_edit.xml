@@ -37,7 +37,7 @@
                                 <label t-attf-value="{{ bus.latitude }}"></label>
                             </t>
                         </div>
-                        <button class="btn btn-secondary" onclick="resetcenter()">รีเซ็ตแมพ</button>
+                        <button class="btn btn-secondary" onclick="resetcenter()">รีเซ็ต</button>
                     </div>
                 </form>
 
@@ -78,7 +78,7 @@
             rotate: 90,
             placeholder: document.getElementById('map')
             });
-            // ราชภัช สงขลา   100.61286270618439| Lat : 7.169065418767738
+            // ราชภัช สงขลา 100.61286270618439| Lat : 7.169065418767738
             map.location({ lon:100.61286270618439, lat:7.169065418767738 }, true);
             //map.location({ lon:100.66, lat:13.8097 }, true);
             map.zoomRange({ min:16, max:20 });
@@ -118,24 +118,25 @@
             //}
             //));
 
+
         </script>
         <script>
             function checkborder() {
             var location = map.location();
 
             if (location.lon &lt; 100.606597) {
-                x = 100.606597;
+            x = 100.606597;
             }else if (location.lon > 100.618442) {
-                x = 100.618442;
+            x = 100.618442;
             }else {
-                x = location.lon;
+            x = location.lon;
             }
             if (location.lat > 7.179364) {
-                y = 7.179364;
+            y = 7.179364;
             }else if (location.lat &lt; 7.161225) {
-                y = 7.161225;
+            y = 7.161225;
             }else {
-                y = location.lat;
+            y = location.lat;
             }
             console.log("lon : " + x + "| Lat : " + y);
             map.location({ lon:x, lat:y }, true);
@@ -188,7 +189,10 @@
             }
 
             setInterval(fetchLocation, 1000);
-            setInterval(checkborder, 500);
+
+            map.Event.bind(longdo.EventName.Drop, function() {
+            checkborder();
+            });
         </script>
 
     </template>
