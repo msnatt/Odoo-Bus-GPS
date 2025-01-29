@@ -194,7 +194,7 @@
             {
             title: station.station_name,
             icon: {
-                url: 'static/images/station1.png',
+                //html: `<p style="color:red; font-size:12px; width:50px; text-align:center;">${station.station_name}</p>`,
                 offset: { x: 0, y: 0 }
                 }
             }
