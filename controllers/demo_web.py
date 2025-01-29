@@ -1,6 +1,6 @@
 from odoo import http
 from odoo.http import route, request
-from werkzeug import utils
+from werkzeug import utils, Response
 import json
 
 
@@ -23,6 +23,7 @@ class MyController(http.Controller):
         id = request.params.get('id')
         print('id=', id)
         allbus = request.env['locate'].sudo().search([])
+
         # data_id = request.env['res.partner'].sudo().search([('id', '=', id)])
         # print('data=', data_id)
         # customer_name = data_id.name
@@ -30,7 +31,7 @@ class MyController(http.Controller):
         # lon = locate_id.longtitude
         # lat = locate_id.latitude
         return http.request.render('web_api.customer_update', {
-            'allbus': allbus
+            'allbus': allbus,
             # 'data': data_id,
             # 'lon': lon,
             # 'lat': lat
@@ -46,7 +47,6 @@ class MyController(http.Controller):
         txt_longtitude = bus.longtitude
         return http.request.render('web_api.customer_update', {'bus': bus, 'allbus': allbus})
 
-
         return http.request.render('your_module.customer_update', {
             'bus_data_json': bus_data_json,  # Pass JSON data to template
         })
@@ -57,6 +57,7 @@ class MyController(http.Controller):
         data = http.request.params
         # search name and update
         rec = request.env['locate'].sudo().search([('name', '=', data['name'])])
+
         if rec:
             updata = {
                 'latitude': data['latitude'],
@@ -89,23 +90,33 @@ class MyController(http.Controller):
         # รับข้อมูลจาก request body ในรูปแบบ JSON
         data = json.loads(http.request.httprequest.get_data())
         name = data.get('name')
-        print("Received Bus Name: ", name)  # แสดงค่า name ที่ได้รับจาก client-side
+        print("Received Bus Name:", name)  # แสดงค่า name ที่ได้รับจาก client-side
 
         # ค้นหาข้อมูลจากฐานข้อมูลที่มีชื่อเป็น 'name' ที่รับมาจาก request
+
         rec = request.env['locate'].sudo().search([('name', '=', name)], limit=1)
-        if rec:
-            # หากเจอ record ให้ส่งข้อมูล latitude และ longitude กลับไป
+        allstation = request.env['station'].sudo().search([])
+
+        try:
             updata = {
                 'latitude': rec.latitude,
                 'longtitude': rec.longtitude,
+                'station': [
+                    {
+                        'station_name': station.name,
+                        'station_latitude': station.station_latitude,
+                        'station_longitude': station.station_longtitude,
+                    }
+                    for station in allstation
+                ]
             }
-            print("Location :", updata)  # แสดงข้อมูล latitude, longitude
 
             return json.dumps(updata)
-        else:
-            return json.dumps({'Name': name})
+        except Exception as e:
+            print("Error creating JSON:", str(e))  # <-- เช็ค error ที่เกิดขึ้น
+            return Response(json.dumps({"error": "Internal Server Error"}), content_type='application/json', status=500)
 
-    @http.route('/display/station', auth='public', methods=['GET','POST'], csrf=False, website=True)
+    @http.route('/display/station', auth='public', methods=['GET', 'POST'], csrf=False, website=True)
     def display_station(self, **kw):
 
         return http.request.render('web_api.display_station')
@@ -113,7 +124,7 @@ class MyController(http.Controller):
     @http.route('/update_passenger', type="json", auth='public', methods=['POST'], csrf=False, website=True)
     def update_passenger(self, **kwargs):
         data = http.request.params
-        print("data value:", data)
+        print("data passenger:", data)
         # search name and update
         rec = request.env['station'].sudo().search([('name', '=', data['name'])])
 
@@ -140,7 +151,7 @@ class MyController(http.Controller):
     # @http.route('/update_bus_location', type="json", auth='public', methods=['POST'], csrf=False, website=True)
     # def update_bus_location(self, **kwargs):
     #     data = http.request.params
-    #     print("data value:", data)
+    #     print("data bus_location:", data)
     #     # search name and update
     #     rec = request.env['station'].sudo().search()
     #
@@ -190,7 +201,7 @@ class MyController(http.Controller):
     @http.route('/get_bus', type="json", auth='public', methods=['POST'], csrf=False, website=True)
     def get_bus(self, **kwargs):
         data = http.request.params
-        print("data value:", data)
+        print("data get_bus form :", data)
         # search name and update
         rec = request.env['locate'].sudo().search([('name', '=', data['name'])])
 
@@ -214,7 +225,7 @@ class MyController(http.Controller):
     @http.route('/get_passenger', type="json", auth='public', methods=['POST'], csrf=False, website=True)
     def get_passenger(self, **kwargs):
         data = http.request.params
-        print("data value:", data)
+        print("data get_passenger:", data)
         # search name and update
         rec = request.env['station'].sudo().search([('name', '=', data['name'])])
 

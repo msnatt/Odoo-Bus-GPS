@@ -42,6 +42,25 @@
                 </form>
 
 
+                <t t-if="allstation">
+                    <t t-foreach="allstation" t-as="station">
+                        <div style="margin-bottom: 10px;">
+                            <!-- ชื่อสถานี -->
+                            <label>ชื่อสถานี:</label>
+                            <input type="hidden" t-esc="station.name"></input>
+
+                            <!-- Latitude -->
+                            <label>ละติจูด:</label>
+                            <input type="hidden" t-esc="station.station_latitude"></input>
+
+                            <!-- Longitude -->
+                            <label>ลองจิจูด:</label>
+                            <input type="hidden" t-esc="station.station_longtitude"></input>
+                        </div>
+                    </t>
+                </t>
+
+                <input type="hidden" t-attf-value="{{ allstation }}" id="Allstation"/>
                 <t t-if="bus">
                     <t t-if="bus.latitude and bus.longtitude">
                         <input type="hidden" t-attf-value="{{ bus.name }}" id="name_bus"/>
@@ -49,6 +68,7 @@
                         <input type="hidden" t-attf-value="{{ bus.longtitude }}" id="longtitude"/>
                     </t>
                 </t>
+
                 <!-- ส่วนของแผนที่ Longdo -->
                 <div id="map" style="height: 550px; margin-top: 10px;"></div>
                 <div id="result"
@@ -83,20 +103,6 @@
             //map.location({ lon:100.66, lat:13.8097 }, true);
             map.zoomRange({ min:16, max:20 });
 
-
-            //station
-            station1 = new longdo.Marker({ lon: 100.613034, lat: 7.167384 },{
-            title: 'Custom Marker',
-            icon: {
-            html: '<b>อาคาร วิทย์</b>',
-            offset: { x:0, y: 0 }
-            },
-            popup: {
-            html: '<div style="background: #eeeeff;">popup</div>'
-            }
-            });
-            map.Overlays.add(station1);
-            // end marker
 
             name_bus = document.getElementById("name_bus").value
             longtitude = document.getElementById("longtitude").value
@@ -163,12 +169,13 @@
             })
             .then(response => response.json())
             .then(data => {
-            console.log(data.result);
+            //console.log(data.result);
             if (name_bus) {
             const locationData = JSON.parse(data.result);
 
             longtitude = locationData.longtitude;
             latitude = locationData.latitude;
+            stations = locationData.station;
 
             map.Overlays.remove(car);
 
@@ -178,13 +185,32 @@
 
             map.Overlays.add(car);
 
-            console.log("Updated position: " + longtitude + ", " + latitude);
+            console.log("Updated Bus position: " + longtitude + ", " + latitude);
+            console.log("== point station ==");
+
+            stations.forEach((station) => {
+            let stationMarker = new longdo.Marker(
+            { lon: station.station_longitude, lat: station.station_latitude },
+            {
+            title: station.station_name,
+            icon: {
+                url: 'static/images/station1.png',
+                offset: { x: 0, y: 0 }
+                }
+            }
+            );
+            map.Overlays.add(stationMarker);
+            });
+
+
             } else {
             console.log("Not Found Bus name ;(");
             }
+
+
             })
             .catch(error => {
-            console.error('Error fetching location:', error);
+            console.error('Error fetching location :', error);
             });
             }
 
