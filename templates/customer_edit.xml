@@ -96,8 +96,9 @@
 
             map = new longdo.Map({placeholder: document.getElementById('map')});
 
-            //map.location({ lon:100.61286270618439, lat:7.169065418767738 }, true);//university   //dont forget deleted // front this line
-            map.location({ lon:100.66, lat:13.8097 }, true);   //bkk
+            //map.location({ lon:100.61286270618439, lat:7.169065418767738 }, true);//university //dont forget deleted
+            // front this line
+            map.location({ lon:100.66, lat:13.8097 }, true); //bkk
             map.zoomRange({ min:16, max:20 });
 
 
@@ -139,7 +140,8 @@
             };
 
             function resetcenter() {
-            //map.location({ lon:100.613034, lat:7.167384 }, true); //university  //dont forget deleted // front this line
+            //map.location({ lon:100.613034, lat:7.167384 }, true); //university //dont forget deleted // front this
+            line
             map.location({ lon:100.66, lat:13.8097 }, true); //bkk
             console.log("reset");
             map.zoom(16, true);
@@ -165,27 +167,25 @@
             latitude = locationData.latitude;
             stations = locationData.stations;
 
-
-            map.Overlays.remove(car);
-            car = new longdo.Marker({ lon: longtitude, lat: latitude }, {title: 'Bus'});
-            map.Overlays.add(car);
-
-
             stations.forEach((station) => {
             let stationMarker = new longdo.Marker(
             { lon: station.station_longitude, lat: station.station_latitude },
             {
             title: station.station_name,
             icon: {
-            url: `https://drive.google.com/file/d/11uSCh_u8pTyrafBeWAZUASqqGgvDrCiG/view?usp=sharing
-<!--            <p style="color:#950606; font-size:12px; width:75px; background-color:white; text-align:center;">-->
-<!--            ${station.station_name}</p>-->
-            `,
-            offset: { x: 25, y: 0 }
+            url: "https://raw.githubusercontent.com/msnatt/Odoo-Bus-GPS/refs/heads/master/static/images/station02.png",
+            offset: { x: 12, y: 12 },
+            size: {width:25 , height: 27.5}
             }
             }
+
             );
             map.Overlays.add(stationMarker);
+
+            map.Overlays.remove(car);
+            car = new longdo.Marker({ lon: longtitude, lat: latitude }, {title: 'Bus',weight:10});
+            map.Overlays.add(car);
+
             });
 
             } else {
@@ -200,7 +200,7 @@
 
             setInterval(fetchLocation, 2000);
             map.Event.bind(longdo.EventName.Drop, function() {
-            //checkborder();                                     //dont forget deleted // front this line
+            //checkborder(); //dont forget deleted // front this line
             });
         </script>
     </template>
