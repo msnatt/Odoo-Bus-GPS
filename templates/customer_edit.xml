@@ -173,9 +173,9 @@
             {
             title: station.station_name,
             icon: {
-            url: "https://raw.githubusercontent.com/msnatt/Odoo-Bus-GPS/refs/heads/master/static/images/station02.png",
-            offset: { x: 12, y: 12 },
-            size: {width:25 , height: 27.5}
+            url: "https://raw.githubusercontent.com/msnatt/Odoo-Bus-GPS/refs/heads/master/static/images/Station03.png",
+            offset: { x: 25, y: 57.5 },
+            size: {width:50 , height: 57.5}
             }
             }
 
@@ -183,7 +183,14 @@
             map.Overlays.add(stationMarker);
 
             map.Overlays.remove(car);
-            car = new longdo.Marker({ lon: longtitude, lat: latitude }, {title: 'Bus',weight:10});
+            car = new longdo.Marker({ lon: longtitude, lat: latitude }, {
+            title: 'Bus',
+            weight:10,
+            icon: {
+            url: "https://raw.githubusercontent.com/msnatt/Odoo-Bus-GPS/refs/heads/master/static/images/school-bus.gif",
+            size: {width:40 , height: 40}
+            }
+            });
             map.Overlays.add(car);
 
             });
