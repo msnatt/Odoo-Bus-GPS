@@ -36,7 +36,7 @@
                     <t t-foreach="custs" t-as="c">
                         <form t-att-action="'/reset_customer_values/' + str(c.id)" method="GET">
                             <button type="submit" class="btn btn-primary mr-2">
-                                รีเซ็ต <span t-esc="c.name"/>
+                                รีเซ็ตข้อมูลสถานี <span t-esc="c.name"/>
                             </button>
                         </form>
                     </t>
@@ -48,7 +48,7 @@
             <script type="text/javascript">
                 setInterval(function() {
                     window.location.reload();
-                }, 2000);  // Refresh every 5000 milliseconds (5 seconds)
+                }, 5000);  // Refresh every 5000 milliseconds (5 seconds)
             </script>
         </t>
     </template>

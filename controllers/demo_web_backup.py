@@ -82,6 +82,7 @@ class MyController(http.Controller):
             'latitude': data['latitude'],
             'longtitude': data['longtitude']
         }
+        print(args)
         return args
 
     @http.route('/get_location', type="json", auth='public', methods=['POST'], csrf=False, website=True)
@@ -100,12 +101,11 @@ class MyController(http.Controller):
             updata = {
                 'latitude': rec.latitude,
                 'longtitude': rec.longtitude,
-                'stations': [
+                'station': [
                     {
                         'station_name': station.name,
                         'station_latitude': station.station_latitude,
                         'station_longitude': station.station_longtitude,
-                        'passenger': station.total_passenger,
                     }
                     for station in allstation
                 ]
@@ -115,39 +115,6 @@ class MyController(http.Controller):
         except Exception as e:
             print("Error creating JSON:", str(e))  # <-- เช็ค error ที่เกิดขึ้น
             return Response(json.dumps({"error": "Internal Server Error"}), content_type='application/json', status=500)
-
-    @http.route('/get_station', methods=['GET'], auth='public', csrf=False, website=True)
-    def get_station(self, **kw):
-        allstation = request.env['station'].sudo().search([])
-        args = {
-                'stations': [
-                    {
-                        'station_name': station.name,
-                        'station_latitude': station.station_latitude,
-                        'station_longitude': station.station_longtitude,
-                        'passenger': station.total_passenger,
-                    }
-                    for station in allstation
-                ]
-            }
-        return request.make_json_response(args)
-
-    @http.route('/update_station', type="json", auth='public', methods=['POST'], csrf=False, website=True)
-    def update_station(self, **kwargs):
-        data = http.request.params
-        # search name and update
-        rec = request.env['station'].sudo().search([('name', '=', data['name'])])
-
-        if rec:
-            updata = {
-                'total_passenger': data['total_passenger'],
-            }
-            rec.sudo().write(updata)
-        args = {
-            'status': 'success',
-            'massage': 'update station',
-        }
-        return args
 
     @http.route('/display/station', auth='public', methods=['GET', 'POST'], csrf=False, website=True)
     def display_station(self, **kw):
@@ -175,6 +142,7 @@ class MyController(http.Controller):
             'success': 'True',
             'data':
                 {
+
                     'name': data['name']
                 },
         }
@@ -206,7 +174,6 @@ class MyController(http.Controller):
     #             },
     #     }
     #     return args
-
     @http.route('/check_pin', type="json", auth='public', methods=['POST'], csrf=False)
     def check_pin01(self):
         data = http.request.params
@@ -219,7 +186,9 @@ class MyController(http.Controller):
         for rec in get_rec:
             res_msg.append({
                 'id': rec.id,
+
                 'message': 'found',
+
             })
         if not res_msg:
             res_msg.append({
@@ -271,6 +240,7 @@ class MyController(http.Controller):
                 {
                     'name': name,
                     'passenger': passenger,
+
                 },
         }
         return args
@@ -289,6 +259,7 @@ class MyController(http.Controller):
             return http.request.render('web_api.longdo_map_page', {})
 
     class CustomerController(http.Controller):
+
         @http.route('/reset_customer_values/<int:customer_id>', type='http', auth='public', methods=['GET'])
         def reset_customer_values(self, customer_id):
             # ค้นหาบันทึกลูกค้าในฐานข้อมูลโดยใช้ customer_id
